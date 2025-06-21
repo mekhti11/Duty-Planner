@@ -4,7 +4,7 @@ import com.example.dutyplanner.domain.model.Duty
 import com.example.dutyplanner.domain.repository.DutyRepository
 import javax.inject.Inject
 
-class AddDutyUseCase @Inject constructor(
+class UpdateDutyUseCase @Inject constructor(
     private val repository: DutyRepository,
     private val validateDuty: ValidateDutyUseCase
 ) {
@@ -13,11 +13,11 @@ class AddDutyUseCase @Inject constructor(
         if (validationResult.isFailure) {
             return validationResult
         }
-
-        return try {
-            repository.addDuty(duty)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        
+        val updatedDuty = duty.copy(
+            updatedAt = kotlinx.datetime.Clock.System.now()
+        )
+        
+        return repository.updateDuty(updatedDuty)
     }
 }
