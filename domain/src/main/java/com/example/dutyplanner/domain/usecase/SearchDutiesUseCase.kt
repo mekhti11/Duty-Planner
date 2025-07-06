@@ -10,14 +10,15 @@ class SearchDutiesUseCase @Inject constructor(
     private val repository: DutyRepository
 ) {
     operator fun invoke(query: String): Flow<List<Duty>> {
-        require(query.length >= MIN_SEARCH_LENGTH) { 
-            "Search query must be at least $MIN_SEARCH_LENGTH characters" 
+        val trimmedQuery = query.trim()
+        require(trimmedQuery.length >= MIN_SEARCH_LENGTH) {
+            "Search query must be at least $MIN_SEARCH_LENGTH characters"
         }
-        
-        return repository.searchDuties(query.trim())
+
+        return repository.searchDuties(trimmedQuery)
             .map { duties ->
                 duties.sortedByDescending { duty ->
-                    calculateRelevanceScore(duty, query)
+                    calculateRelevanceScore(duty, trimmedQuery)
                 }
             }
     }
